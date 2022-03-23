@@ -10,6 +10,18 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var navController: NavController
 
+    var taps: Int = 0
+    var prestige: Float = 1f
+    var tapPower: Int = 1
+    var idlePower: Int = 0
+    var tapUpgradeSmall: Int = 0
+    var tapUpgradeMed: Int = 0
+    var tapUpgradeBig: Int = 0
+    var idleUpgradeSmall: Int = 0
+    var idleUpgradeMed: Int = 0
+    var idleUpgradeBig: Int = 0
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -19,6 +31,8 @@ class MainActivity : AppCompatActivity() {
         val navHostFragment = supportFragmentManager
             .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         navController = navHostFragment.navController
+
+
     }
 
     override fun onSupportNavigateUp(): Boolean {
