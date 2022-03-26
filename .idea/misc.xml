@@ -4,8 +4,9 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Users/Owner/AndroidStudioProjects/IdleTapperVersion3/app/src/main/res/layout/activity_main.xml" value="0.1" />
-        <entry key="..\:/Users/Owner/AndroidStudioProjects/IdleTapperVersion3/app/src/main/res/layout/fragment_store.xml" value="0.1" />
-        <entry key="..\:/Users/Owner/AndroidStudioProjects/IdleTapperVersion3/app/src/main/res/layout/fragment_tap.xml" value="0.1" />
+        <entry key="..\:/Users/Owner/AndroidStudioProjects/IdleTapperVersion3/app/src/main/res/layout/fragment_store.xml" value="0.22" />
+        <entry key="..\:/Users/Owner/AndroidStudioProjects/IdleTapperVersion3/app/src/main/res/layout/fragment_tap.xml" value="0.22" />
+        <entry key="..\:/Users/Owner/AndroidStudioProjects/IdleTapperVersion3/app/src/main/res/layout/store_item.xml" value="0.22" />
       </map>
     </option>
   </component>

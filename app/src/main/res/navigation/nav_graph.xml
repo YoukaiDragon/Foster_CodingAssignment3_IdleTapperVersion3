@@ -18,5 +18,9 @@
         android:id="@+id/storeFragment"
         android:name="com.example.idletapperversion3.StoreFragment"
         android:label="fragment_store"
-        tools:layout="@layout/fragment_store" />
+        tools:layout="@layout/fragment_store" >
+        <action
+            android:id="@+id/action_storeFragment_to_tapFragment"
+            app:destination="@id/tapFragment" />
+    </fragment>
 </navigation>

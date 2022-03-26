@@ -1,31 +1,32 @@
 package com.example.idletapperversion3
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.example.idletapperversion3.databinding.FragmentTapBinding
 import com.example.idletapperversion3.savedata.SaveData
 import com.example.idletapperversion3.viewmodels.IdleTapperViewModel
 import com.example.idletapperversion3.viewmodels.IdleTapperViewModelFactory
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.last
 
 class TapFragment : Fragment() {
 
-    private val viewModel: IdleTapperViewModel by activityViewModels {
+    private val TAG = "TapFragment"
+
+    val viewModel: IdleTapperViewModel by activityViewModels {
         IdleTapperViewModelFactory(
             (activity?.application as IdleTapperApplication).database.saveDataDao()
         )
     }
 
     lateinit var save: LiveData<SaveData>
-    lateinit var mainActivity: MainActivity
+    private lateinit var mainActivity: MainActivity
 
     private var _binding: FragmentTapBinding? = null
     private val binding get() = _binding!!
@@ -35,16 +36,34 @@ class TapFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         mainActivity = this.activity as MainActivity
+        viewModel.saveData.observe(viewLifecycleOwner, Observer {save ->
+            bind(save)
+        })
         _binding = FragmentTapBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        binding.button.setOnClickListener {
+        binding.shopButton.setOnClickListener {
             val action = TapFragmentDirections.actionTapFragmentToStoreFragment()
             findNavController().navigate(action)
         }
-       loadSave()
+
+        binding.tapButton.setOnClickListener {
+            mainActivity.taps += mainActivity.tapPower
+            updateUI()
+        }
+
+        //loadSave()
+        //initialize UI values
+        updateUI()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        Log.i(TAG, "onPause")
+        saveData()
+        Log.i(TAG, "finished Saving")
     }
 
     override fun onDestroyView() {
@@ -52,22 +71,17 @@ class TapFragment : Fragment() {
         _binding = null
     }
 
-    private fun loadSave() {
-        save = viewModel.getSaveData(0)
-        bind(save.value)
-    }
-
     private fun saveData() {
-
-    }
-
-    private fun createSave() {
-        viewModel.insertSaveData(0,1f,1,0,0,
-        0,0,0,0,0)
+        viewModel.updateSaveData(mainActivity.taps, mainActivity.prestige, mainActivity.tapPower,
+            mainActivity.idlePower, mainActivity.tapUpgradeSmall, mainActivity.tapUpgradeMed,
+            mainActivity.tapUpgradeBig, mainActivity.idleUpgradeSmall, mainActivity.idleUpgradeMed,
+            mainActivity.idleUpgradeBig)
     }
 
     private fun bind(saveData: SaveData?){
+        Log.i(TAG, "HELLO")
         if(saveData != null) {
+            Log.i(TAG, saveData.taps.toString())
             mainActivity.taps = saveData.taps
             mainActivity.prestige = saveData.prestige
             mainActivity.tapPower = saveData.tapPower
@@ -79,6 +93,11 @@ class TapFragment : Fragment() {
             mainActivity.idleUpgradeMed = saveData.idleUpgradeMed
             mainActivity.idleUpgradeBig = saveData.idleUpgradeBig
         }
+        updateUI()
+    }
+
+    private fun updateUI() {
+        binding.tapCounter.text = getString(R.string.tap_counter, mainActivity.taps)
     }
 
 }

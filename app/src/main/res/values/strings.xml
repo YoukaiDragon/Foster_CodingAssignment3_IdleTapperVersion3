@@ -1,5 +1,16 @@
 <resources>
     <string name="app_name">IdleTapperVersion3</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="goto_shop">Buy Upgrades</string>
+    <string name="tap_counter">%d Taps</string>
+    <string name="tap_button">TAP</string>
+
+    <!--For store fragment-->
+    <string name="exit_store">Exit Store</string>
+    <string name="upgrade_button">Upgrade</string>
+    <string name="small_tapper">Level %d Small Tapper Cost: %d</string>
+    <string name="small_idler">Level %d Small Idler Cost: %d</string>
+    <string name="med_tapper">Level %d Medium Tapper Cost: %d</string>
+    <string name="med_idler">Level %d Medium Idler Cost: %d</string>
+    <string name="big_tapper">Level %d Big Tapper Cost: %d</string>
+    <string name="big_idler">Level %d Big Idler Cost: %d</string>
 </resources>
