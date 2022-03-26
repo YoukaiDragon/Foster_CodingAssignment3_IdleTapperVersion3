@@ -68,6 +68,10 @@ class IdleTapperViewModel(private val saveDataDao: SaveDataDao) : ViewModel() {
         }
     }
 
+    /*
+    resets the save data. Make sure prestige and tapPower are set to 1 and not 0,
+    as setting either value to zero will prevent taps being gained
+     */
     fun reset() {
         updateSaveData(0, 1f, 1, 0, 0,
             0, 0, 0, 0, 0)
@@ -89,10 +93,12 @@ class IdleTapperViewModel(private val saveDataDao: SaveDataDao) : ViewModel() {
         val data: SaveData
         if(_saveData.value != null) {
             data = _saveData.value!!
-            updateSaveData((data.taps + data.idlePower * data.prestige).roundToInt(),
-                data.prestige, data.tapPower, data.idlePower, data.tapUpgradeSmall,
-                data.tapUpgradeMed, data.tapUpgradeBig, data.idleUpgradeSmall,
-                data.idleUpgradeMed, data.idleUpgradeBig)
+            if(data.idlePower > 0) {
+                updateSaveData((data.taps + data.idlePower * data.prestige).roundToInt(),
+                    data.prestige, data.tapPower, data.idlePower, data.tapUpgradeSmall,
+                    data.tapUpgradeMed, data.tapUpgradeBig, data.idleUpgradeSmall,
+                    data.idleUpgradeMed, data.idleUpgradeBig)
+            }
         }
     }
 
@@ -175,10 +181,10 @@ class IdleTapperViewModel(private val saveDataDao: SaveDataDao) : ViewModel() {
         val data: SaveData
         if(_saveData.value != null) {
             data = _saveData.value!!
-            updateSaveData(data.taps, data.prestige + prestige,
-                data.tapPower, data.idlePower, data.tapUpgradeSmall,
-                data.tapUpgradeMed, data.tapUpgradeBig, data.idleUpgradeSmall,
-                data.idleUpgradeMed, data.idleUpgradeBig)
+            updateSaveData(0, data.prestige + prestige,
+                1, 0, 0,
+                0, 0, 0,
+                0, 0)
         }
     }
 }

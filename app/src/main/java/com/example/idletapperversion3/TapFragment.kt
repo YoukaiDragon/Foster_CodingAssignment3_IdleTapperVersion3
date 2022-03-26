@@ -1,6 +1,8 @@
 package com.example.idletapperversion3
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -37,7 +39,7 @@ class TapFragment : Fragment() {
     ): View {
         mainActivity = this.activity as MainActivity
         viewModel.saveData.observe(viewLifecycleOwner, Observer {save ->
-            bind(save)
+            updateUI(save)
         })
         _binding = FragmentTapBinding.inflate(inflater, container, false)
         return binding.root
@@ -53,9 +55,14 @@ class TapFragment : Fragment() {
             viewModel.tapping()
         }
 
-        //loadSave()
-        //initialize UI values
-        updateUI()
+        //start function to generate idle taps
+        val handler = Handler(Looper.getMainLooper())
+        handler.postDelayed(object : Runnable {
+            override fun run() {
+                idleTap()
+                handler.postDelayed(this, 1000)//1/second
+            }
+        }, 0)
     }
 
     override fun onPause() {
@@ -68,28 +75,15 @@ class TapFragment : Fragment() {
         _binding = null
     }
 
-    private fun bind(saveData: SaveData?){
-        if(saveData != null) {
-            mainActivity.taps = saveData.taps
-            mainActivity.prestige = saveData.prestige
-            mainActivity.tapPower = saveData.tapPower
-            mainActivity.idlePower = saveData.idlePower
-            mainActivity.tapUpgradeSmall = saveData.tapUpgradeSmall
-            mainActivity.tapUpgradeMed = saveData.tapUpgradeMed
-            mainActivity.tapUpgradeBig = saveData.tapUpgradeBig
-            mainActivity.idleUpgradeSmall = saveData.idleUpgradeSmall
-            mainActivity.idleUpgradeMed = saveData.idleUpgradeMed
-            mainActivity.idleUpgradeBig = saveData.idleUpgradeBig
+    private fun updateUI(saveData: SaveData?) {
+        if(saveData != null){
+            binding.tapCounter.text = getString(R.string.tap_counter, saveData.taps)
         }
-        updateUI()
     }
 
-    private fun updateUI() {
-        binding.tapCounter.text = getString(R.string.tap_counter, mainActivity.taps)
-    }
-
-    private fun updateTaps(taps: Int) {
-        binding.tapCounter.text = getString(R.string.tap_counter, taps)
+    //function called every second by handler to passively increase tapCount
+    private fun idleTap() {
+        viewModel.idling()
     }
 
 }

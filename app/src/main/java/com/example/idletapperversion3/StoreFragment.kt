@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
 import com.example.idletapperversion3.databinding.FragmentStoreBinding
 import com.example.idletapperversion3.savedata.SaveData
 import com.example.idletapperversion3.storeData.Datasource
@@ -51,6 +52,11 @@ class StoreFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        binding.exitStoreButton.setOnClickListener {
+            val action = StoreFragmentDirections.actionStoreFragmentToTapFragment()
+            findNavController().navigate(action)
+        }
+
         binding.smallTapButton.setOnClickListener {
             val item = storeItemList[SMALL_TAP]
             viewModel.upgrade(SMALL_TAP, item.baseCost, item.costIncreaseFactor,
