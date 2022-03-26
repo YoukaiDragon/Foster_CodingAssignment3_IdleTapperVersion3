@@ -1,17 +1,20 @@
 package com.example.idletapperversion3.viewmodels
 
+import android.util.Log
 import androidx.lifecycle.*
 import com.example.idletapperversion3.savedata.SaveData
 import com.example.idletapperversion3.savedata.SaveDataDao
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import java.lang.IllegalArgumentException
+import kotlin.math.roundToInt
 
 class IdleTapperViewModel(private val saveDataDao: SaveDataDao) : ViewModel() {
 
     private var _saveData: MutableLiveData<SaveData> = getSave(1) as MutableLiveData<SaveData>
     val saveData: LiveData<SaveData>
         get() = _saveData
+
 
     private fun updateSave(saveData: SaveData) {
         viewModelScope.launch {
@@ -55,8 +58,128 @@ class IdleTapperViewModel(private val saveDataDao: SaveDataDao) : ViewModel() {
         val save = createSaveData(taps, prestige, tapPower, idlePower,
             tapUpgradeSmall, tapUpgradeMed, tapUpgradeBig,
             idleUpgradeSmall, idleUpgradeMed, idleUpgradeBig)
-        updateSave(save)
         _saveData.postValue(save)
+    }
+
+    fun save() {
+        if(_saveData.value != null)
+        {
+            updateSave(_saveData.value!!)
+        }
+    }
+
+    fun reset() {
+        updateSaveData(0, 1f, 1, 0, 0,
+            0, 0, 0, 0, 0)
+    }
+
+    fun tapping() {
+        val data: SaveData
+        if(_saveData.value != null) {
+            data = _saveData.value!!
+            updateSaveData(
+                (data.taps + data.tapPower * data.prestige).roundToInt(),
+                data.prestige, data.tapPower, data.idlePower, data.tapUpgradeSmall,
+                data.tapUpgradeMed, data.tapUpgradeBig, data.idleUpgradeSmall,
+                data.idleUpgradeMed, data.idleUpgradeBig)
+        }
+    }
+
+    fun idling() {
+        val data: SaveData
+        if(_saveData.value != null) {
+            data = _saveData.value!!
+            updateSaveData((data.taps + data.idlePower * data.prestige).roundToInt(),
+                data.prestige, data.tapPower, data.idlePower, data.tapUpgradeSmall,
+                data.tapUpgradeMed, data.tapUpgradeBig, data.idleUpgradeSmall,
+                data.idleUpgradeMed, data.idleUpgradeBig)
+        }
+    }
+
+    fun upgrade(upgradeIndex: Int, baseCost: Int, costIncreaseFactor: Float,
+        upgradePowerBoost: Int, idle: Boolean) {
+        var data: SaveData
+        if(_saveData.value != null) {
+            data = _saveData.value!!
+            var cost = baseCost
+            var upgradeLevel = 0
+            when(upgradeIndex) {
+                0 -> upgradeLevel = data.tapUpgradeSmall
+                1 -> upgradeLevel = data.tapUpgradeMed
+                2 -> upgradeLevel = data.tapUpgradeBig
+                3 -> upgradeLevel = data.idleUpgradeSmall
+                4 -> upgradeLevel = data.idleUpgradeMed
+                5 -> upgradeLevel = data.idleUpgradeBig
+            }
+            var x = 0
+            while (x < upgradeLevel) {
+                cost = (cost * costIncreaseFactor).roundToInt()
+                x++
+            }
+            //update saveData based on which button was clicked
+            if(data.taps >= cost) {
+                when(upgradeIndex) {
+                    0 -> updateSaveData(data.taps - cost, data.prestige,
+                        data.tapPower + upgradePowerBoost, data.idlePower,
+                        data.tapUpgradeSmall + 1, data.tapUpgradeMed,
+                        data.tapUpgradeBig, data.idleUpgradeSmall, data.idleUpgradeMed,
+                        data.idleUpgradeBig)
+                    1 -> updateSaveData(data.taps - cost, data.prestige,
+                        data.tapPower + upgradePowerBoost, data.idlePower,
+                        data.tapUpgradeSmall, data.tapUpgradeMed + 1,
+                        data.tapUpgradeBig, data.idleUpgradeSmall, data.idleUpgradeMed,
+                        data.idleUpgradeBig)
+                    2 -> updateSaveData(data.taps - cost, data.prestige,
+                        data.tapPower + upgradePowerBoost, data.idlePower,
+                        data.tapUpgradeSmall, data.tapUpgradeMed,
+                        data.tapUpgradeBig + 1, data.idleUpgradeSmall,
+                        data.idleUpgradeMed, data.idleUpgradeBig)
+                    3 -> updateSaveData(data.taps - cost, data.prestige,
+                        data.tapPower, data.idlePower + upgradePowerBoost,
+                        data.tapUpgradeSmall, data.tapUpgradeMed, data.tapUpgradeBig,
+                        data.idleUpgradeSmall + 1, data.idleUpgradeMed,
+                        data.idleUpgradeBig)
+                    4 -> updateSaveData(data.taps - cost, data.prestige,
+                        data.tapPower, data.idlePower + upgradePowerBoost,
+                        data.tapUpgradeSmall, data.tapUpgradeMed, data.tapUpgradeBig,
+                        data.idleUpgradeSmall, data.idleUpgradeMed + 1,
+                        data.idleUpgradeBig)
+                    5 -> updateSaveData(data.taps - cost, data.prestige,
+                        data.tapPower, data.idlePower + upgradePowerBoost,
+                        data.tapUpgradeSmall, data.tapUpgradeMed, data.tapUpgradeBig,
+                        data.idleUpgradeSmall, data.idleUpgradeMed,
+                        data.idleUpgradeBig + 1)
+                }
+            }
+        }
+    }
+
+    //returns the amount of prestige that would be gained from a prestige reset
+    fun getPrestige(): Float {
+        var prestige = 0f
+        var data: SaveData
+        if(_saveData.value != null) {
+            data = _saveData.value!!
+
+            if(data.taps < 1000){
+                return 0f
+            }
+
+            prestige = (data.taps/1000).toFloat() * 0.05f
+        }
+        return prestige
+    }
+
+    fun gainPrestige() {
+        val prestige = getPrestige()
+        val data: SaveData
+        if(_saveData.value != null) {
+            data = _saveData.value!!
+            updateSaveData(data.taps, data.prestige + prestige,
+                data.tapPower, data.idlePower, data.tapUpgradeSmall,
+                data.tapUpgradeMed, data.tapUpgradeBig, data.idleUpgradeSmall,
+                data.idleUpgradeMed, data.idleUpgradeBig)
+        }
     }
 }
 

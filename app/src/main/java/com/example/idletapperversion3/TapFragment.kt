@@ -50,8 +50,7 @@ class TapFragment : Fragment() {
         }
 
         binding.tapButton.setOnClickListener {
-            mainActivity.taps += mainActivity.tapPower
-            updateUI()
+            viewModel.tapping()
         }
 
         //loadSave()
@@ -61,9 +60,7 @@ class TapFragment : Fragment() {
 
     override fun onPause() {
         super.onPause()
-        Log.i(TAG, "onPause")
-        saveData()
-        Log.i(TAG, "finished Saving")
+        viewModel.save()
     }
 
     override fun onDestroyView() {
@@ -71,17 +68,8 @@ class TapFragment : Fragment() {
         _binding = null
     }
 
-    private fun saveData() {
-        viewModel.updateSaveData(mainActivity.taps, mainActivity.prestige, mainActivity.tapPower,
-            mainActivity.idlePower, mainActivity.tapUpgradeSmall, mainActivity.tapUpgradeMed,
-            mainActivity.tapUpgradeBig, mainActivity.idleUpgradeSmall, mainActivity.idleUpgradeMed,
-            mainActivity.idleUpgradeBig)
-    }
-
     private fun bind(saveData: SaveData?){
-        Log.i(TAG, "HELLO")
         if(saveData != null) {
-            Log.i(TAG, saveData.taps.toString())
             mainActivity.taps = saveData.taps
             mainActivity.prestige = saveData.prestige
             mainActivity.tapPower = saveData.tapPower
@@ -98,6 +86,10 @@ class TapFragment : Fragment() {
 
     private fun updateUI() {
         binding.tapCounter.text = getString(R.string.tap_counter, mainActivity.taps)
+    }
+
+    private fun updateTaps(taps: Int) {
+        binding.tapCounter.text = getString(R.string.tap_counter, taps)
     }
 
 }

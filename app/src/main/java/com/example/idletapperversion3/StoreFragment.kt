@@ -6,9 +6,10 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.activityViewModels
 import com.example.idletapperversion3.databinding.FragmentStoreBinding
-import com.example.idletapperversion3.model.StoreItem
+import com.example.idletapperversion3.savedata.SaveData
 import com.example.idletapperversion3.storeData.Datasource
 import com.example.idletapperversion3.viewmodels.IdleTapperViewModel
 import com.example.idletapperversion3.viewmodels.IdleTapperViewModelFactory
@@ -18,7 +19,7 @@ class StoreFragment : Fragment() {
 
     private val TAG = "Store Fragment"
 
-    val viewModel: IdleTapperViewModel by activityViewModels {
+    private val viewModel: IdleTapperViewModel by activityViewModels {
         IdleTapperViewModelFactory(
             (activity?.application as IdleTapperApplication).database.saveDataDao()
         )
@@ -43,6 +44,7 @@ class StoreFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         mainActivity = this.activity as MainActivity
+        viewModel.saveData.observe(viewLifecycleOwner, {save -> updateUI(save)})
         _binding = FragmentStoreBinding.inflate(inflater, container, false)
         val view = binding.root
         return view
@@ -50,32 +52,60 @@ class StoreFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.smallTapButton.setOnClickListener {
-            upgrade(SMALL_TAP)
+            val item = storeItemList[SMALL_TAP]
+            viewModel.upgrade(SMALL_TAP, item.baseCost, item.costIncreaseFactor,
+                item.upgradePowerBoost, item.idle)
         }
         binding.medTapButton.setOnClickListener {
-            upgrade(MED_TAP)
+            val item = storeItemList[MED_TAP]
+            viewModel.upgrade(MED_TAP, item.baseCost, item.costIncreaseFactor,
+                item.upgradePowerBoost, item.idle)
         }
         binding.bigTapButton.setOnClickListener {
-            upgrade(BIG_TAP)
+            val item = storeItemList[BIG_TAP]
+            viewModel.upgrade(BIG_TAP, item.baseCost, item.costIncreaseFactor,
+                item.upgradePowerBoost, item.idle)
         }
         binding.smallIdleButton.setOnClickListener {
-            upgrade(SMALL_IDLE)
+            val item = storeItemList[SMALL_IDLE]
+            viewModel.upgrade(SMALL_IDLE, item.baseCost, item.costIncreaseFactor,
+                item.upgradePowerBoost, item.idle)
         }
         binding.medIdleButton.setOnClickListener {
-            upgrade(MED_IDLE)
+            val item = storeItemList[MED_IDLE]
+            viewModel.upgrade(MED_IDLE, item.baseCost, item.costIncreaseFactor,
+                item.upgradePowerBoost, item.idle)
         }
         binding.bigIdleButton.setOnClickListener {
-            upgrade(BIG_IDLE)
+            val item = storeItemList[BIG_IDLE]
+            viewModel.upgrade(BIG_IDLE, item.baseCost, item.costIncreaseFactor,
+                item.upgradePowerBoost, item.idle)
         }
 
-        updateUI()
+        binding.resetButton.setOnClickListener {
+            val builder = AlertDialog.Builder(mainActivity)
+            builder.setTitle("Reset Progress")
+            builder.setMessage("Are you sure you want to reset all progress?")
+            builder.setPositiveButton("Yes") { _, _ -> reset() }
+            builder.setNegativeButton("No") { dialog, _ -> dialog.cancel() }
+            builder.show()
+        }
+
+        binding.prestigeButton.setOnClickListener {
+            val prestige = viewModel.getPrestige()
+            val builder = AlertDialog.Builder(mainActivity)
+            builder.setTitle("Prestige Reset")
+            builder.setMessage("Do you want to reset taps and upgrades to gain " +
+                    prestige + " prestige?")
+            builder.setPositiveButton("Yes") { _, _ -> gainPrestige()}
+            builder.setNegativeButton("No") {dialog, _ -> dialog.cancel()}
+            builder.show()
+        }
     }
 
     override fun onPause() {
         super.onPause()
-        Log.i(TAG, "onPause")
-        saveData()
-        Log.i(TAG, "finished Saving")
+        viewModel.save()
     }
 
     override fun onDestroyView() {
@@ -83,75 +113,55 @@ class StoreFragment : Fragment() {
         _binding = null
     }
 
-    private fun updateUI() {
-        binding.tapCounter.text = getString(R.string.tap_counter, mainActivity.taps)
-        binding.smallTapText.text = getString(R.string.small_tapper, mainActivity.tapUpgradeSmall
-            ,getUpgradeCost(SMALL_TAP))
-        binding.medTapText.text = getString(R.string.med_tapper, mainActivity.tapUpgradeMed
-            ,getUpgradeCost(MED_TAP))
-        binding.bigTapText.text = getString(R.string.big_tapper, mainActivity.tapUpgradeBig
-            ,getUpgradeCost(BIG_TAP))
-        binding.smallIdleText.text = getString(R.string.small_idler, mainActivity.idleUpgradeSmall
-            ,getUpgradeCost(SMALL_IDLE))
-        binding.medIdleText.text = getString(R.string.med_idler, mainActivity.idleUpgradeMed
-            ,getUpgradeCost(MED_IDLE))
-        binding.bigIdleText.text = getString(R.string.big_idler, mainActivity.idleUpgradeBig
-            ,getUpgradeCost(BIG_IDLE))
+    private fun updateUI(save: SaveData?) {
+        if(save != null) {
+            binding.tapCounter.text = getString(R.string.tap_counter, save.taps)
+            binding.smallTapText.text = getString(R.string.small_tapper, save.tapUpgradeSmall
+                ,getUpgradeCost(SMALL_TAP, save))
+            binding.medTapText.text = getString(R.string.med_tapper, save.tapUpgradeMed
+                ,getUpgradeCost(MED_TAP, save))
+            binding.bigTapText.text = getString(R.string.big_tapper, save.tapUpgradeBig
+                ,getUpgradeCost(BIG_TAP, save))
+            binding.smallIdleText.text = getString(R.string.small_idler, save.idleUpgradeSmall
+                ,getUpgradeCost(SMALL_IDLE, save))
+            binding.medIdleText.text = getString(R.string.med_idler, save.idleUpgradeMed
+                ,getUpgradeCost(MED_IDLE, save))
+            binding.bigIdleText.text = getString(R.string.big_idler, save.idleUpgradeBig
+                ,getUpgradeCost(BIG_IDLE, save))
+        }
     }
 
     //determines the costs of an upgrade
-    private fun getUpgradeCost(index: Int): Int {
+    private fun getUpgradeCost(index: Int, save: SaveData?): Int {
         val item = storeItemList[index]
-        var upgradeLevel = 0
-        when(index){
-            SMALL_TAP -> upgradeLevel = mainActivity.tapUpgradeSmall
-            MED_TAP -> upgradeLevel = mainActivity.tapUpgradeMed
-            BIG_TAP -> upgradeLevel = mainActivity.tapUpgradeBig
-            SMALL_IDLE -> upgradeLevel = mainActivity.idleUpgradeSmall
-            MED_IDLE -> upgradeLevel = mainActivity.idleUpgradeMed
-            BIG_IDLE -> upgradeLevel = mainActivity.idleUpgradeBig
-        }
         var cost = item.baseCost
-        var x = 0
+        if(save != null){
 
-        //each upgrade level cost is the previous level cost * costIncreaseFactor
-        while (x < upgradeLevel) {
-            cost = (cost * item.costIncreaseFactor).roundToInt()
-            x++
+            var upgradeLevel = 0
+            when(index){
+                SMALL_TAP -> upgradeLevel = save.tapUpgradeSmall
+                MED_TAP -> upgradeLevel = save.tapUpgradeMed
+                BIG_TAP -> upgradeLevel = save.tapUpgradeBig
+                SMALL_IDLE -> upgradeLevel = save.idleUpgradeSmall
+                MED_IDLE -> upgradeLevel = save.idleUpgradeMed
+                BIG_IDLE -> upgradeLevel = save.idleUpgradeBig
+            }
+            var x = 0
+
+            //each upgrade level cost is the previous level cost * costIncreaseFactor
+            while (x < upgradeLevel) {
+                cost = (cost * item.costIncreaseFactor).roundToInt()
+                x++
+            }
         }
-
         return cost
     }
 
-    private fun upgrade(index: Int) {
-        val item = storeItemList[index]
-        var cost = getUpgradeCost(index)
-
-        if(mainActivity.taps >= cost) {
-            mainActivity.taps -= cost
-            if(item.idle) {
-                mainActivity.idlePower += item.upgradePowerBoost
-            } else {
-                mainActivity.tapPower += item.upgradePowerBoost
-            }
-
-            when(index){
-                SMALL_TAP -> mainActivity.tapUpgradeSmall++
-                MED_TAP -> mainActivity.tapUpgradeMed++
-                BIG_TAP -> mainActivity.tapUpgradeBig++
-                SMALL_IDLE -> mainActivity.idleUpgradeSmall++
-                MED_IDLE -> mainActivity.idleUpgradeMed++
-                BIG_IDLE -> mainActivity.idleUpgradeBig++
-            }
-
-            updateUI()
-        }
+    private fun reset() {
+        viewModel.reset()
     }
 
-    private fun saveData() {
-        viewModel.updateSaveData(mainActivity.taps, mainActivity.prestige, mainActivity.tapPower,
-            mainActivity.idlePower, mainActivity.tapUpgradeSmall, mainActivity.tapUpgradeMed,
-            mainActivity.tapUpgradeBig, mainActivity.idleUpgradeSmall, mainActivity.idleUpgradeMed,
-            mainActivity.idleUpgradeBig)
+    private fun gainPrestige() {
+        viewModel.gainPrestige()
     }
 }

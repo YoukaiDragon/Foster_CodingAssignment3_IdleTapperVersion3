@@ -13,4 +13,6 @@
     <string name="med_idler">Level %d Medium Idler Cost: %d</string>
     <string name="big_tapper">Level %d Big Tapper Cost: %d</string>
     <string name="big_idler">Level %d Big Idler Cost: %d</string>
+    <string name="reset_button">RESET</string>
+    <string name="prestige_button">PRESTIGE</string>
 </resources>
