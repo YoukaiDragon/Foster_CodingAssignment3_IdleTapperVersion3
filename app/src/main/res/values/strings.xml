@@ -3,6 +3,9 @@
     <string name="goto_shop">Buy Upgrades</string>
     <string name="tap_counter">%d Taps</string>
     <string name="tap_button">TAP</string>
+    <string name="tap_power_display">Power: %d</string>
+    <string name="idle_power_display">Idle: %d /s</string>
+    <string name="prestige_display">Prestige Level: %.2f</string>
 
     <!--For store fragment-->
     <string name="exit_store">Exit Store</string>

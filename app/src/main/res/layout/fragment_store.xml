@@ -10,11 +10,13 @@
         android:id="@+id/big_idle_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="18dp"
         android:text="@string/big_idler"
+        app:layout_constraintEnd_toEndOf="@+id/big_idle_button"
         app:layout_constraintEnd_toStartOf="@+id/big_idle_button"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/big_idle_button"
-        android:layout_marginTop="15dp"/>
+        app:layout_constraintTop_toTopOf="@+id/big_idle_button" />
 
     <Button
         android:id="@+id/exit_store_button"
@@ -38,51 +40,60 @@
         android:id="@+id/small_idle_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="10dp"
         android:text="@string/small_idler"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/small_idle_button"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/small_idle_button"
-        android:layout_marginTop="15dp"/>
+        app:layout_constraintTop_toTopOf="@+id/small_idle_button" />
 
     <TextView
         android:id="@+id/med_idle_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="2dp"
         android:text="@string/med_idler"
+        app:layout_constraintEnd_toEndOf="@+id/med_idle_button"
         app:layout_constraintEnd_toStartOf="@+id/med_idle_button"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/med_idle_button"
-        android:layout_marginTop="15dp"/>
+        app:layout_constraintTop_toTopOf="@+id/med_idle_button" />
 
     <TextView
         android:id="@+id/small_tap_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="2dp"
         android:text="@string/small_tapper"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/small_tap_button"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/small_tap_button"
-        android:layout_marginTop="15dp"/>
+        app:layout_constraintTop_toTopOf="@+id/small_tap_button" />
 
     <TextView
         android:id="@+id/big_tap_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="10dp"
         android:text="@string/big_tapper"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/big_tap_button"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/big_tap_button"
-        android:layout_marginTop="15dp"/>
+        app:layout_constraintTop_toTopOf="@+id/big_tap_button" />
 
     <TextView
         android:id="@+id/med_tap_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
         android:text="@string/med_tapper"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/med_tap_button"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/med_tap_button"
-        android:layout_marginTop="15dp"/>
+        app:layout_constraintTop_toTopOf="@+id/med_tap_button" />
 
     <Button
         android:id="@+id/small_tap_button"
@@ -98,21 +109,19 @@
         android:id="@+id/med_tap_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
         android:text="@string/upgrade_button"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/small_tap_button"
-        android:layout_marginTop="10dp"
-        />
+        app:layout_constraintTop_toBottomOf="@+id/small_tap_button" />
 
     <Button
         android:id="@+id/big_tap_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
         android:text="@string/upgrade_button"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/med_tap_button"
-        android:layout_marginTop="10dp"
-        />
+        app:layout_constraintTop_toBottomOf="@+id/med_tap_button" />
 
     <Button
         android:id="@+id/small_idle_button"
@@ -136,11 +145,10 @@
         android:id="@+id/big_idle_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
         android:text="@string/upgrade_button"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/med_idle_button"
-        android:layout_marginTop="10dp"
-        />
+        app:layout_constraintTop_toBottomOf="@+id/med_idle_button" />
 
     <Button
         android:id="@+id/reset_button"
@@ -156,5 +164,32 @@
         android:layout_height="wrap_content"
         android:text="@string/prestige_button"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/tapPowerDisplay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/tap_power_display"
+        app:layout_constraintEnd_toStartOf="@+id/tap_counter"
+        app:layout_constraintStart_toEndOf="@+id/reset_button"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/idlePowerDisplay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/idle_power_display"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/tap_counter"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/prestigeDisplay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        android:text="@string/prestige_display"
+        app:layout_constraintBottom_toTopOf="@+id/prestige_button"
         app:layout_constraintStart_toStartOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

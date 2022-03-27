@@ -3,14 +3,11 @@ package com.example.idletapperversion3
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.example.idletapperversion3.databinding.FragmentTapBinding
 import com.example.idletapperversion3.savedata.SaveData
@@ -19,15 +16,12 @@ import com.example.idletapperversion3.viewmodels.IdleTapperViewModelFactory
 
 class TapFragment : Fragment() {
 
-    private val TAG = "TapFragment"
-
-    val viewModel: IdleTapperViewModel by activityViewModels {
+    private val viewModel: IdleTapperViewModel by activityViewModels {
         IdleTapperViewModelFactory(
             (activity?.application as IdleTapperApplication).database.saveDataDao()
         )
     }
 
-    lateinit var save: LiveData<SaveData>
     private lateinit var mainActivity: MainActivity
 
     private var _binding: FragmentTapBinding? = null
@@ -38,7 +32,7 @@ class TapFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         mainActivity = this.activity as MainActivity
-        viewModel.saveData.observe(viewLifecycleOwner, Observer {save ->
+        viewModel.saveData.observe(viewLifecycleOwner, { save ->
             updateUI(save)
         })
         _binding = FragmentTapBinding.inflate(inflater, container, false)
@@ -78,6 +72,9 @@ class TapFragment : Fragment() {
     private fun updateUI(saveData: SaveData?) {
         if(saveData != null){
             binding.tapCounter.text = getString(R.string.tap_counter, saveData.taps)
+            binding.tapPowerText.text = getString(R.string.tap_power_display, saveData.tapPower)
+            binding.idlePowerText.text = getString(R.string.idle_power_display, saveData.idlePower)
+            binding.prestigeText.text = getString(R.string.prestige_display, saveData.prestige)
         }
     }
 

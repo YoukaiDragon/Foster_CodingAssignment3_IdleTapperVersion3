@@ -1,8 +1,8 @@
 package com.example.idletapperversion3.savedata
 
-import android.content.ClipData
-import androidx.lifecycle.LiveData
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Query
+import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
 
 @Dao

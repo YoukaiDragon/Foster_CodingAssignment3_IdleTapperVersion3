@@ -1,17 +1,14 @@
 package com.example.idletapperversion3.viewmodels
 
-import android.util.Log
 import androidx.lifecycle.*
 import com.example.idletapperversion3.savedata.SaveData
 import com.example.idletapperversion3.savedata.SaveDataDao
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
-import java.lang.IllegalArgumentException
 import kotlin.math.roundToInt
 
 class IdleTapperViewModel(private val saveDataDao: SaveDataDao) : ViewModel() {
 
-    private var _saveData: MutableLiveData<SaveData> = getSave(1) as MutableLiveData<SaveData>
+    private var _saveData: MutableLiveData<SaveData> = getSave() as MutableLiveData<SaveData>
     val saveData: LiveData<SaveData>
         get() = _saveData
 
@@ -22,10 +19,12 @@ class IdleTapperViewModel(private val saveDataDao: SaveDataDao) : ViewModel() {
         }
     }
 
-    private fun getSave(id: Int): LiveData<SaveData> {
+    //change function to take an integer as input if support for multiple
+    //saves added
+    private fun getSave(): LiveData<SaveData> {
         lateinit var save: LiveData<SaveData>
         viewModelScope.launch {
-            save = saveDataDao.getSaveData(id).asLiveData()
+            save = saveDataDao.getSaveData(1).asLiveData()
         }
         return save
     }
@@ -50,11 +49,11 @@ class IdleTapperViewModel(private val saveDataDao: SaveDataDao) : ViewModel() {
         )
     }
 
-    fun updateSaveData(taps: Int, prestige: Float,
-                       tapPower: Int, idlePower: Int,
-                       tapUpgradeSmall: Int, tapUpgradeMed: Int,
-                       tapUpgradeBig: Int, idleUpgradeSmall: Int,
-                       idleUpgradeMed: Int, idleUpgradeBig: Int) {
+    private fun updateSaveData(taps: Int, prestige: Float,
+                               tapPower: Int, idlePower: Int,
+                               tapUpgradeSmall: Int, tapUpgradeMed: Int,
+                               tapUpgradeBig: Int, idleUpgradeSmall: Int,
+                               idleUpgradeMed: Int, idleUpgradeBig: Int) {
         val save = createSaveData(taps, prestige, tapPower, idlePower,
             tapUpgradeSmall, tapUpgradeMed, tapUpgradeBig,
             idleUpgradeSmall, idleUpgradeMed, idleUpgradeBig)
@@ -93,18 +92,16 @@ class IdleTapperViewModel(private val saveDataDao: SaveDataDao) : ViewModel() {
         val data: SaveData
         if(_saveData.value != null) {
             data = _saveData.value!!
-            if(data.idlePower > 0) {
-                updateSaveData((data.taps + data.idlePower * data.prestige).roundToInt(),
-                    data.prestige, data.tapPower, data.idlePower, data.tapUpgradeSmall,
-                    data.tapUpgradeMed, data.tapUpgradeBig, data.idleUpgradeSmall,
-                    data.idleUpgradeMed, data.idleUpgradeBig)
-            }
+            updateSaveData((data.taps + data.idlePower * data.prestige).roundToInt(),
+                data.prestige, data.tapPower, data.idlePower, data.tapUpgradeSmall,
+                data.tapUpgradeMed, data.tapUpgradeBig, data.idleUpgradeSmall,
+                data.idleUpgradeMed, data.idleUpgradeBig)
         }
     }
 
     fun upgrade(upgradeIndex: Int, baseCost: Int, costIncreaseFactor: Float,
-        upgradePowerBoost: Int, idle: Boolean) {
-        var data: SaveData
+        upgradePowerBoost: Int) {
+        val data: SaveData
         if(_saveData.value != null) {
             data = _saveData.value!!
             var cost = baseCost
@@ -163,7 +160,7 @@ class IdleTapperViewModel(private val saveDataDao: SaveDataDao) : ViewModel() {
     //returns the amount of prestige that would be gained from a prestige reset
     fun getPrestige(): Float {
         var prestige = 0f
-        var data: SaveData
+        val data: SaveData
         if(_saveData.value != null) {
             data = _saveData.value!!
 
