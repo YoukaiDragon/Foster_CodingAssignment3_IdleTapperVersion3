@@ -23,6 +23,7 @@ class StoreFragment : Fragment() {
         )
     }
 
+    // Better to store these in an enum
     private val SMALL_TAP = 0
     private val MED_TAP = 1
     private val BIG_TAP = 2

@@ -98,7 +98,8 @@ class IdleTapperViewModel(private val saveDataDao: SaveDataDao) : ViewModel() {
                 data.idleUpgradeMed, data.idleUpgradeBig)
         }
     }
-
+//  Not sure if the line break at upgradePowerBoost was intentional - but generally if you are going
+//  to line break you should break for each parameter in the function signature and indent right
     fun upgrade(upgradeIndex: Int, baseCost: Int, costIncreaseFactor: Float,
         upgradePowerBoost: Int) {
         val data: SaveData
@@ -114,12 +115,19 @@ class IdleTapperViewModel(private val saveDataDao: SaveDataDao) : ViewModel() {
                 4 -> upgradeLevel = data.idleUpgradeMed
                 5 -> upgradeLevel = data.idleUpgradeBig
             }
-            var x = 0
-            while (x < upgradeLevel) {
-                cost = (cost * costIncreaseFactor).roundToInt()
-                x++
-            }
+            // No need for a while loop! You just need to raise the cost factor to the upgradeLevel
+            cost = (cost * Math.pow(costIncreaseFactor.toDouble(), upgradeIndex.toDouble())).roundToInt()
+//            var x = 0
+//            while (x < upgradeLevel) {
+//                cost = (cost * costIncreaseFactor).roundToInt()
+//                x++
+//            }
             //update saveData based on which button was clicked
+
+//          This function is much too long, and does probably on the order of three different things
+//          At the very least, the if/when combo below should be moved to another function. You might
+//          find that the code is cleaner actually if you split out updateSaveData into multiple
+//          smaller helper functions (saveTaps, savePrestige, etc).
             if(data.taps >= cost) {
                 when(upgradeIndex) {
                     0 -> updateSaveData(data.taps - cost, data.prestige,
