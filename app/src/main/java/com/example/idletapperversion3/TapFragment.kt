@@ -75,6 +75,11 @@ class TapFragment : Fragment() {
             binding.tapPowerText.text = getString(R.string.tap_power_display, saveData.tapPower)
             binding.idlePowerText.text = getString(R.string.idle_power_display, saveData.idlePower)
             binding.prestigeText.text = getString(R.string.prestige_display, saveData.prestige)
+        } else {
+            // I haven't given this a full test, but you need something like this to avoid the
+            // scenario where your strings are not correctly initialized on first load. This might
+            // not be the most optimal solution, but was the first approach I came across.
+            viewModel.reset()
         }
     }
 
